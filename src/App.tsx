@@ -94,6 +94,48 @@ export default function App() {
       createOptimizedImage(src)
     );
 
+    const blockedKeys = new Set([
+      "Tab",
+      "Escape",
+      "F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12",
+    ]);
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key;
+    
+      // Block common combos
+      if (
+        blockedKeys.has(key) ||
+        e.ctrlKey ||
+        e.metaKey ||   // Mac ⌘
+        e.altKey
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+    
+      // your existing logic
+      const k = key.toLowerCase();
+      const note = noteMap[k];
+    
+      if (note && noteSounds[note]) {
+        playNote(note);
+      }
+    
+      addEffect(
+        Math.random() * canvas.width,
+        Math.random() * canvas.height,
+        k
+      );
+    };
+    
+    window.addEventListener("keydown", handleKeyDown, { passive: false });
+
+    window.addEventListener("blur", () => {
+      window.focus();
+    });
+
     resize();
     window.addEventListener("resize", resize);
 
